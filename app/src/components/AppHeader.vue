@@ -1,5 +1,19 @@
 <template>
-  <nav class="navbar" role="navigation" aria-label="main navigation">
+  <v-toolbar color="primary" dark fixed app :clipped-left="$vuetify.breakpoint.mdAndUp">
+    <v-toolbar-side-icon @click.stop="toggleNavDrawer"></v-toolbar-side-icon>
+    <v-toolbar-title>Budzet</v-toolbar-title>
+    <v-spacer></v-spacer>
+    <v-toolbar-items class="hidden-sm-and-down">
+      <v-btn flat to="profile">
+        <v-avatar class="mr-3" size="32">
+          <img :src="userPhoto" alt="John">
+        </v-avatar>
+        {{ username }}
+      </v-btn>
+    </v-toolbar-items>
+    <logout-button />
+  </v-toolbar>
+  <!-- <nav class="navbar" role="navigation" aria-label="main navigation">
     <div class="container">
       <div class="navbar-brand">
         <router-link to="/" class="navbar-item">
@@ -17,9 +31,11 @@
 
       <div :class="navBarMenuClass">
         <div class="navbar-start">
-          <a class="navbar-item">
-            Link
-          </a>
+          <div class="navbar-tabs">
+            <router-link to="accounts" class="navbar-item is-tab" active-class="is-active">
+              Accounts
+            </router-link>
+          </div>
         </div>
 
         <div class="navbar-end">
@@ -29,7 +45,7 @@
         </div>
       </div>
     </div>
-  </nav>
+  </nav> -->
 </template>
 
 <script>
@@ -51,6 +67,12 @@
       };
     },
     computed: {
+      username() {
+        return this.$store.getters['user/username'];
+      },
+      userPhoto() {
+        return this.$store.getters['user/photoUrl'];
+      },
       navBarMenuClass() {
         return {
           'navbar-menu': true,
@@ -59,6 +81,9 @@
       }
     },
     methods: {
+      toggleNavDrawer() {
+        this.$emit('toggle-nav-drawer');
+      },
       toggleMenu() {
         this.isOpen = !this.isOpen;
       },

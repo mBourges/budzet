@@ -36,6 +36,10 @@ const router = new Router({
           name: 'Accounts',
           component: () => import('@/components/Accounts')
         }, {
+          path: 'profile',
+          name: 'profile',
+          component: () => import('@/components/Profile')
+        }, {
           path: '*',
           name: 'AppNotFound',
           component: NotFound

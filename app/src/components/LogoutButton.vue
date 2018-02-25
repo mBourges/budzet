@@ -1,10 +1,13 @@
 <template>
-  <button class="button" @click="logout">
+  <v-btn icon @click="logout">
+    <v-icon>exit_to_app</v-icon>
+  </v-btn>
+  <!-- <button class="button" @click="logout">
     <span class="icon button-icon">
       <i class="fa fa-sign-out" aria-hidden="true"></i>
     </span>
     <span>Logout</span>
-  </button>
+  </button> -->
 </template>
 
 <script>

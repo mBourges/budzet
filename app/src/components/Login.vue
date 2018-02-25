@@ -1,33 +1,38 @@
 <template>
-  <div class="login">
-    <transition name="fade">
-      <p v-if="hasError" class="notification is-danger top-notification">
-        <span class="icon">
-          <i class="fa fa-exclamation-triangle"></i>
-        </span>
-        {{ errorMessage }}
-      </p>
-    </transition>
-    <div class="box">
-      <form @submit.prevent="login">
-        <h3 class="title">Sign In</h3>
-        <div class="field">
-          <div class="control">
-            <input class="input" type="text" v-model="email" placeholder="username">
-          </div>
-        </div>
-        <div class="field">
-          <div class="control">
-            <input class="input" type="password" v-model="password" placeholder="password">
-          </div>
-        </div>
-        <div class="buttons is-centered">
-          <button :disabled="isProcessing" :class="buttonClass" type="submit">sign in</button>
-        </div>
-        <p class="is-size-7">You don't have an account? <router-link to="/sign-up">Create a new one.</router-link></p>
-      </form>
-    </div>
-  </div>
+  <v-app>
+    <v-content>
+      <v-container fluid fill-height>
+        <v-layout align-center justify-center>
+          <v-flex xs12 sm8 md4>
+            <v-card class="elevation-12">
+              <v-toolbar dark color="primary">
+                <v-toolbar-title>Login form</v-toolbar-title>
+                <v-spacer></v-spacer>
+              </v-toolbar>
+              <v-form @submit.prevent="login">
+                <v-card-text>
+                  <v-text-field v-model="email" :rules="emailRules" autofocus required prepend-icon="person" name="email" label="Email" type="email"></v-text-field>
+                  <v-text-field v-model="password" required prepend-icon="lock" name="password" label="Password" id="password" type="password"></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                  <p>
+                    You don't have an account?<br />
+                    <router-link to="/sign-up">Create a new one.</router-link>
+                  </p>
+                  <v-spacer></v-spacer>
+                  <v-btn color="primary" :disabled="isProcessing" :loading="isProcessing" type="submit">Login</v-btn>
+                </v-card-actions>
+              </v-form>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-content>
+    <v-snackbar top right :value="hasError" @input="closeNotification">
+      {{ errorMessage }}
+      <v-btn flat color="pink" @click="closeNotification">Close</v-btn>
+    </v-snackbar>
+  </v-app>
 </template>
 
 <script>
@@ -40,33 +45,31 @@
         email: '',
         password: '',
         isProcessing: false,
-        errorMessage: null
+        errorMessage: null,
+        emailRules: [
+          v => !!v || 'E-mail is required',
+          v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
+        ]
       };
     },
     computed: {
       redirection() {
         return this.$route.query.redirect || '/';
       },
-      buttonClass() {
-        return {
-          button: true,
-          'is-primary': true,
-          'is-loading': this.isProcessing
-        };
-      },
       hasError() {
         return !!this.errorMessage;
       }
     },
     methods: {
+      closeNotification() {
+        this.errorMessage = null;
+      },
       login() {
         this.isProcessing = true;
         this.errorMessage = null;
 
-        setTimeout(() => {
-          auth.signInWithEmailAndPassword(this.email, this.password)
-            .then(this.onLoginSuccess, this.onLoginError);
-        }, 250);
+        auth.signInWithEmailAndPassword(this.email, this.password)
+          .then(this.onLoginSuccess, this.onLoginError);
       },
       onLoginSuccess(user) {
         this.$router.replace(this.redirection);
@@ -78,29 +81,3 @@
     }
   };
 </script>
-
-<style scoped>
-  .login {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    padding: 4rem;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .top-notification {
-    position: fixed;
-    top: 0;
-  }
-
-  .fade-enter-active, .fade-leave-active {
-    transition-duration: 250ms;
-    transition-timing-function: ease-out;
-    transform: translate3d(0, 0, 0);
-  }
-
-  .fade-enter, .fade-leave-to {
-    transform: translate3d(0, -100%, 0);
-  }
-</style>

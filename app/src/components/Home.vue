@@ -1,6 +1,6 @@
 <template functional>
-  <div>
-    <div>Home</div>
+  <div class="container">
+    <div>Transactions</div>
     <div>Home</div>
     <div>Home</div>
     <div>Home</div>
